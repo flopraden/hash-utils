@@ -1,4 +1,4 @@
-// compile with gcc -lcrypt -lcrypto -o passwd-tools passwd-tools.c
+// compile with gcc -lcrypt -lcrypto -o passwd-tools passwd-tools.c base64.c
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -116,13 +116,13 @@ char *fDigest(char *str,char *salt,unsigned long lSalt,unsigned char *digest){
     if(salt[0]==0){
       genSaltBin(salt,lSalt);
       salt_b64=(char *)calloc(lSalt*2+5,sizeof(char));
-      //      base64_encode((const char *) salt, lSalt,salt_b64, lSalt*2+5);
-      base64encode(salt, lSalt,salt_b64, lSalt*2+5);
+      base64_encode((const char *) salt, lSalt,salt_b64, lSalt*2+5);
+      //base64encode(salt, lSalt,salt_b64, lSalt*2+5);
     }
     else if(salt[lSalt-1]=='='){
       salt_bin=(char *)calloc(lSalt+1,sizeof(char));
-      //      lSalt=base64_decode((const char *) salt, salt_bin, lSalt+1);
-      lSalt=base64decode( salt, lSalt,salt_bin);
+      lSalt=base64_decode((const char *) salt, salt_bin, lSalt+1);
+      //lSalt=base64decode( salt, lSalt,salt_bin);
     }
     EVP_DigestUpdate(mdctx, salt_bin?salt_bin:salt, lSalt);
   }
@@ -134,8 +134,8 @@ char *fDigest(char *str,char *salt,unsigned long lSalt,unsigned char *digest){
   
 
   memset(md_b64, 0x00, sizeof md_b64);
-  //base64_encode((const char *) md_value, EVP_MD_size(md),md_b64, sizeof md_b64);
-  base64encode( md_value, EVP_MD_size(md),md_b64, sizeof md_b64);
+  base64_encode((const char *) md_value, EVP_MD_size(md),md_b64, sizeof md_b64);
+  //base64encode( md_value, EVP_MD_size(md),md_b64, sizeof md_b64);
 
   snprintf(ret,lRet,":%s:%s:%s",digest,(salt?(salt_b64?salt_b64:salt):""),md_b64);
   if(salt_b64)
@@ -226,8 +226,8 @@ char *fPBKDF2(char *str,char *salt,unsigned long lSalt,char *sPRF){
     lSalt=strlen(ssalt);
     if(salt[lSalt-1]=='='){
       salt_bin=(char *)calloc(lSalt+1,sizeof(char));
-      //      lSalt=base64_decode((const char *) salt, salt_bin, lSalt+1);
-      lSalt=base64decode( salt, lSalt,salt_bin);
+      lSalt=base64_decode((const char *) salt, salt_bin, lSalt+1);
+      //lSalt=base64decode( salt, lSalt,salt_bin);
     }
   }
   else{
@@ -235,13 +235,13 @@ char *fPBKDF2(char *str,char *salt,unsigned long lSalt,char *sPRF){
       if(salt[0]==0){
 	genSaltBin(salt,lSalt);
 	salt_b64=(char *)calloc(lSalt*2+5,sizeof(char));
-	//	base64_encode((const char *) salt, lSalt,salt_b64, lSalt*2+5);
-	base64encode( salt, lSalt,salt_b64, lSalt*2+5);
+	base64_encode((const char *) salt, lSalt,salt_b64, lSalt*2+5);
+	//base64encode( salt, lSalt,salt_b64, lSalt*2+5);
       }
       else if(salt[lSalt-1]=='='){
 	salt_bin=(char *)calloc(lSalt+1,sizeof(char));
-	//	lSalt=base64_decode((const char *) salt, salt_bin, lSalt+1);
-	lSalt=base64decode( salt, lSalt,salt_bin);
+	lSalt=base64_decode((const char *) salt, salt_bin, lSalt+1);
+	//lSalt=base64decode( salt, lSalt,salt_bin);
       }
     }
     else{
@@ -252,8 +252,8 @@ char *fPBKDF2(char *str,char *salt,unsigned long lSalt,char *sPRF){
       salt=ssalt;
       genSaltBin(salt,lSalt);
       salt_b64=(char *)calloc(lSalt*2+5,sizeof(char));
-      //      base64_encode((const char *) salt, lSalt,salt_b64, lSalt*2+5);
-      base64encode( salt, lSalt,salt_b64, lSalt*2+5);
+      base64_encode((const char *) salt, lSalt,salt_b64, lSalt*2+5);
+      //base64encode( salt, lSalt,salt_b64, lSalt*2+5);
     }
   }
 
@@ -291,8 +291,8 @@ char *fPBKDF2(char *str,char *salt,unsigned long lSalt,char *sPRF){
 
   /* Convert the digest to Base 64 */
   memset(digest_b64, 0x00, sizeof digest_b64);
-  //(void) base64_encode((const char *) digest, EVP_MD_size(md), digest_b64, sizeof digest_b64);
-  base64encode( digest, EVP_MD_size(md), digest_b64, sizeof digest_b64);
+  base64_encode((const char *) digest, EVP_MD_size(md), digest_b64, sizeof digest_b64);
+  //base64encode( digest, EVP_MD_size(md), digest_b64, sizeof digest_b64);
 
   /* Format the result */
   lRes=(EVP_MAX_MD_SIZE * 2) + strlen(sPRF)+lSalt+30;
