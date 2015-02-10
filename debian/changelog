@@ -1,0 +1,4 @@
+hash-utils (1.0.0-1) unstable; urgency=medium
+  * first version of the package
+
+ -- fpraden <florian@praden.eu>  Thu, 05 Feb 2015 15:11:59 +0100
